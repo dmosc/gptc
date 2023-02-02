@@ -1,4 +1,4 @@
-pub mod args;
+mod args;
 
 pub fn load_args(mut args: impl Iterator<Item = String>) -> Result<args::Args, &'static str> {
     // Skip first argument containing binary path.

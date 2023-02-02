@@ -1,35 +1,22 @@
-use reqwest::blocking::Client;
-use serde_json::json;
-use std::env;
-
-use gptc::load_args;
+use clap::Parser;
 
 mod args;
 mod config;
+mod gpt_client;
 
 fn main() {
+    let args = args::Args::parse();
     let config = config::Config::new().unwrap();
-    let args = load_args(env::args()).unwrap();
-    let http_client = Client::new();
-    let response = http_client
-        .post("https://api.openai.com/v1/completions")
-        .json(&json!({
-            "top_p": 1,
-            "stop": "```",
-            "temperature": 0,
-            "suffix": "\n```",
-            "max_tokens": 1000,
-            "presence_penalty": 0,
-            "frequency_penalty": 0,
-            "model": "text-davinci-003",
-            "prompt": args.get_query()
-        }))
-        .header("Content-Type", "application/json")
-        .header(
-            "Authorization",
-            format!("Bearer {}", config.get_openai_key()),
-        )
-        .send()
-        .unwrap();
-    println!("{:?}", response.text());
+    let gpt_client = gpt_client::GPTClient::new();
+    let response = gpt_client.query(&args, &config).unwrap();
+    let reply = response.as_object().unwrap()["choices"][0]["text"]
+        .as_str()
+        .unwrap()
+        .trim();
+
+    for line in reply.lines() {
+        if line.len() > 0 {
+            println!("{:#?}", line);
+        }
+    }
 }

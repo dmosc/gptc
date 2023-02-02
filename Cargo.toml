@@ -7,4 +7,5 @@ edition = "2021"
 
 [dependencies]
 reqwest = { version = "0.11.14", default-features = false, features = ["json", "blocking", "rustls-tls"] }
+clap = { version = "4.1.4", features = ["derive"] }
 serde_json = "1.0"

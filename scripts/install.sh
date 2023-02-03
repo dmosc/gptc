@@ -44,7 +44,8 @@ main() {
 
 	if [[ -z ${OPENAI_KEY} ]]; then
 		message "Adding \$OPENAI_KEY to $SHELL_PROFILE config file; make sure to set your personal API key.";
-		echo "export OPENAI_KEY=# Create an OpenAI API key; see https://platform.openai.com/account/api-keys." >> $SHELL_PROFILE;
+		echo "# Create an OpenAI API key; see https://platform.openai.com/account/api-keys." >> $SHELL_PROFILE;
+		echo "export OPENAI_KEY=" >> $SHELL_PROFILE;
 	fi
 
 	message "Ensuring $BIN_PATH exists";
@@ -55,6 +56,7 @@ main() {
 	message "Finished installing gptc command inside $BIN_PATH";
 	info "Make sure to go to $SHELL_PROFILE and set a valid value for \$OPENAI_KEY to start making queries.";
 	info "(i.e.): gptc --prompt \"What's the difference between apples and oranges?\"";
+	exec $SHELL;
 }
 
-main || exit 1
+main || exit 1;

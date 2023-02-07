@@ -16,7 +16,7 @@ fn main() {
 
     for line in reply.lines() {
         if line.len() > 0 {
-            println!("{:#?}", line);
+            println!("{}", line);
         }
     }
 }

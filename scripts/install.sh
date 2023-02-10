@@ -23,7 +23,7 @@ error() {
 main() {
 	BIN_PATH="$HOME/.local/bin";
 	BIN_NAME="gptc";
-	URL="https://github.com/dmosc/gptc/releases/download/alpha/gptc";
+	URL="https://github.com/dmosc/gptc/releases/latest/download/gptc";
 
 	# If $BIN_PATH is not included in the main $PATH
 	# we add it to make sure the binary is findable.
@@ -55,7 +55,7 @@ main() {
 	chmod +x "$BIN_PATH/$BIN_NAME";
 	message "Finished installing gptc command inside $BIN_PATH";
 	info "Make sure to go to $SHELL_PROFILE and set a valid value for \$OPENAI_KEY to start making queries.";
-	info "(i.e.): gptc --prompt \"What's the difference between apples and oranges?\"";
+	info "Try gptc --help for more information.";
 	exec $SHELL;
 }
 

@@ -23,15 +23,22 @@ impl GPTClient {
             .http_client
             .post("https://api.openai.com/v1/completions")
             .json(&json!({
-                "top_p": 1,
-                "stop": "```",
                 "temperature": 0,
-                "suffix": "\n```",
                 "max_tokens": 1000,
                 "presence_penalty": 0,
                 "frequency_penalty": 0,
                 "model": "text-davinci-003",
-                "prompt": args.prompt
+                // TODO: Test out prefix query alternatives.
+                // The current prefix *seems* to work in all cases
+                // but is important to test a wide range of programming
+                // languages, technologies, and operating systems to make sure.
+                // Example queries that have been tested so far:
+                //
+                // gptc -p "linux script to install a binary in bin/ directory."
+                // gptc -p "npm command to install dependencies."
+                // gptc -p "dnf centos command to list installed dependencies."
+                // gptc -p "dnf centos command to list package or group of packages installed; then grep response to find tmux dependency."
+                "prompt": format!("reply only with code: {}", args.prompt)
             }))
             .header("Content-Type", "application/json")
             .header(

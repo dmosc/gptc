@@ -2,10 +2,11 @@
 name = "gptc"
 version = "0.1.0"
 edition = "2021"
-
-# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+authors = ["Oscar Rodríguez <osdavrm@gmail.com>"]
+description = "A GPT CLI implementation to access OpenAI's models."
 
 [dependencies]
 reqwest = { version = "0.11.14", default-features = false, features = ["json", "blocking", "rustls-tls"] }
 clap = { version = "4.1.4", features = ["derive"] }
 serde_json = "1.0"
+dotenv = "0.15.0"

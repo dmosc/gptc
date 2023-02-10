@@ -1,11 +1,11 @@
-use clap::Parser;
-
 mod args;
 mod config;
 mod gpt_client;
 
 fn main() {
-    let args = args::Args::parse();
+    dotenv::dotenv().ok();
+
+    let args = args::load_args();
     let config = config::Config::new().unwrap();
     let gpt_client = gpt_client::GPTClient::new();
     let response = gpt_client.query(&args, &config).unwrap();

@@ -1,11 +1,14 @@
 use clap::Parser;
 
 #[derive(Debug, Parser, PartialEq)]
-#[command(author, version, about, long_about = None)]
+#[command(author, version, about)]
 pub struct Args {
     /// Prompt sent to GPT model.
-    #[arg(short, long)]
     pub prompt: String,
+
+    /// Copy output to clipboard.
+    #[arg(short, long)]
+    pub clipboard: bool,
 }
 
 pub fn load_args() -> Args {

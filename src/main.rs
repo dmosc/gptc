@@ -1,6 +1,11 @@
+use std::process::exit;
+
+use clipboard::{ClipboardContext, ClipboardProvider};
+
 mod args;
 mod config;
 mod gpt_client;
+mod logger;
 
 fn main() {
     dotenv::dotenv().ok();
@@ -14,9 +19,22 @@ fn main() {
         .unwrap()
         .trim();
 
+    if reply.is_empty() {
+        logger::info("no reply back; try a different wording for the query");
+        exit(0);
+    }
+
+    logger::info("fetched the following:");
+
     for line in reply.lines() {
         if line.len() > 0 {
-            println!("{}", line);
+            logger::log(line);
         }
+    }
+
+    if args.clipboard {
+        let mut clipboard_context = ClipboardContext::new().unwrap();
+        clipboard_context.set_contents(reply.to_string()).unwrap();
+        logger::info("copied contents to clipboard");
     }
 }

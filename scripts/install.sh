@@ -23,7 +23,7 @@ error() {
 main() {
 	BIN_PATH="$HOME/.local/bin";
 	BIN_NAME="gptc";
-	URL="https://github.com/dmosc/gptc/releases/download/alpha/gptc";
+	URL="https://github.com/dmosc/gptc/releases/latest/download/gptc";
 
 	# If $BIN_PATH is not included in the main $PATH
 	# we add it to make sure the binary is findable.

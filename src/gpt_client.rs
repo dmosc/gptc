@@ -1,7 +1,7 @@
 use reqwest::{blocking::Client, Error};
 use serde_json::json;
 
-use crate::{args, config};
+use crate::{args, config, logger};
 
 pub struct GPTClient {
     http_client: Client,
@@ -19,6 +19,7 @@ impl GPTClient {
         args: &args::Args,
         config: &config::Config,
     ) -> Result<serde_json::Value, Error> {
+        logger::info("waiting for reply...");
         match self
             .http_client
             .post("https://api.openai.com/v1/completions")

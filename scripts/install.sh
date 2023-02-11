@@ -41,8 +41,10 @@ main() {
 		echo "export PATH=\"\$PATH:$BIN_PATH\"" >> $SHELL_PROFILE;
 	fi
 
-	if [[ -n "${OPENAI_KEY}" ]]; then
-		read -p "Enter your OpenAI's API key: " openai_key;
+	if [[ -z ${OPENAI_KEY} ]]; then
+		# See https://stackoverflow.com/a/15185051/11672866 for more information on
+		# stdout/stderr redirection.
+		read -p "Enter your OpenAI's API key: " openai_key < /dev/tty;
 		message "Adding \$OPENAI_KEY to $SHELL_PROFILE config file with the provided API key.";
 		echo "export OPENAI_KEY=$openai_key" >> $SHELL_PROFILE;
 	fi

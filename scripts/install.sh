@@ -1,51 +1,50 @@
 #!/usr/bin/env bash
 
-set -e;
-
 RED='\033[0;31m';
 BLUE="\033[0;34m";
 YELLOW="\033[1;33m";
 NO_COLOR="\033[0m";
 
 info() {
-	echo -e "${YELLOW}[info]: $@${NO_COLOR}";
+	echo "${YELLOW}[info]: $@${NO_COLOR}";
 }
 
 message() {
-	echo -e "${BLUE}[message]: $@${NO_COLOR}";
+	echo "${BLUE}[message]: $@${NO_COLOR}";
 }
 
 error() {
-	echo -e "${RED}[error]: $@${NO_COLOR}";
+	echo "${RED}[error]: $@${NO_COLOR}";
 	exit 1;
 }
 
 main() {
-	BIN_PATH="$HOME/.local/bin";
+	BIN_PATH="/usr/local/bin";
 	BIN_NAME="gptc";
 	URL="https://github.com/dmosc/gptc/releases/latest/download/gptc";
+
+	if [[ $SHELL == *"/zsh" ]]; then
+		SHELL_PROFILE="$HOME/.zshrc";
+	elif [[ $SHELL == *"/bash" ]]; then
+		SHELL_PROFILE="$HOME/.bashrc";
+	else
+		error "Can't find shell config; try adding $BIN_PATH to your \$PATH variable.";
+	fi
+	message "Using $SHELL_PROFILE as shell config.";
 
 	# If $BIN_PATH is not included in the main $PATH
 	# we add it to make sure the binary is findable.
 	if [[ ":$PATH:" != *":$BIN_PATH:"* ]]; then
-		if [[ $SHELL == *"/zsh" ]]; then
-			SHELL_PROFILE="$HOME/.zshrc";
-		elif [[ $SHELL == *"/bash" ]]; then
-			SHELL_PROFILE="$HOME/.bashrc";
-		else
-			error "Can't find shell config; try adding $BIN_PATH to your \$PATH variable.";
-		fi
-		message "Using $SHELL_PROFILE as shell config.";
 		# Export $PATH with $BIN_PATH attached at the end and
 		# append the command inside the $SHELL_PROFILE config.
+		message "Appending $BIN_PATH to \$PATH variable inside $SHELL_PROFILE.";
 		echo "export PATH=\"\$PATH:$BIN_PATH\"" >> $SHELL_PROFILE;
 	fi
 
-
 	if [[ -z ${OPENAI_KEY} ]]; then
-		message "Adding \$OPENAI_KEY to $SHELL_PROFILE config file; make sure to set your personal API key.";
-		echo "# Create an OpenAI API key; see https://platform.openai.com/account/api-keys." >> $SHELL_PROFILE;
-		echo "export OPENAI_KEY=" >> $SHELL_PROFILE;
+		read -p "Enter your OpenAI's API key: " OPENAI_KEY;
+		message "Adding \$OPENAI_KEY to $SHELL_PROFILE config file with the provided API key.";
+		echo "export OPENAI_KEY=$OPENAI_KEY" >> $SHELL_PROFILE;
 	fi
 
 	message "Ensuring $BIN_PATH exists";
@@ -54,7 +53,6 @@ main() {
 	curl -L $URL -o "$BIN_PATH/$BIN_NAME";
 	chmod +x "$BIN_PATH/$BIN_NAME";
 	message "Finished installing gptc command inside $BIN_PATH";
-	info "Make sure to go to $SHELL_PROFILE and set a valid value for \$OPENAI_KEY to start making queries.";
 	info "Try gptc --help for more information.";
 	exec $SHELL;
 }

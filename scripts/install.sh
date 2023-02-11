@@ -41,10 +41,10 @@ main() {
 		echo "export PATH=\"\$PATH:$BIN_PATH\"" >> $SHELL_PROFILE;
 	fi
 
-	if [[ -z ${OPENAI_KEY} ]]; then
-		read -p "Enter your OpenAI's API key: " OPENAI_KEY;
+	if [[ -n "${OPENAI_KEY}" ]]; then
+		read -p "Enter your OpenAI's API key: " openai_key;
 		message "Adding \$OPENAI_KEY to $SHELL_PROFILE config file with the provided API key.";
-		echo "export OPENAI_KEY=$OPENAI_KEY" >> $SHELL_PROFILE;
+		echo "export OPENAI_KEY=$openai_key" >> $SHELL_PROFILE;
 	fi
 
 	message "Ensuring $BIN_PATH exists";

@@ -10,17 +10,14 @@ Run the following script to download the latest `gptc` binary:
 curl -fsSL https://raw.githubusercontent.com/dmosc/gptc/main/scripts/install.sh | sh
 ```
 
-The script installs `gptc`'s binary inside `$HOME/.local/bin` and appends the path to your `$PATH` variable. The path will be created if it doesn't exist.
-
-Also, the script registers the `$OPENAI_KEY` environment variable inside your shell configuration file (i.e. `.zshrc`, `.bashrc`).
-
-Once the script finishes downloading the CLI, open your shell configuration file (i.e. `vim $HOME/[.zshrc, .bashrc]`) and set a valid `$OPENAI_KEY` key. [You can get an API key from OpenAI's platform](https://platform.openai.com/account/api-keys).
+During installation, `gptc` will prompt you for an OpenAI API key and export the `$OPENAI_KEY` environment variable inside your shell configuration file (i.e. `.zshrc`, `.bashrc`) with the provided key. The script installs `gptc`'s binary inside `/usr/local/bin` and appends the path to your `$PATH` variable if it isn't registered [(get an API key from OpenAI's platform)](https://platform.openai.com/account/api-keys).
 
 ## Usage
 
 ```
 gptc --help
-gptc --prompt "What's the difference between apples and oranges?"
+gptc "linux script to install a binary in bin/ directory"
+gptc "create an index.html file with common html boilerplate"
 ```
 
 ## Troubleshooting

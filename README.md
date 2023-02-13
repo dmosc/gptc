@@ -1,4 +1,4 @@
-# gptc
+![gptc](/assets/readme-banner.png)
 
 A light weight CLI to interact with the OpenAI models from your terminal written in Rust. OpenAI's LLMs are bringing a whole new dimension to the development experience and it's important to bridge the communication with our every day tools.
 

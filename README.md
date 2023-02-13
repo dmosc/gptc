@@ -1,6 +1,22 @@
-# gptc
+<!--
+	`p.align` is officially deprecated from MDN standard but still
+	supported by all major browsers.
+
+	https://developer.mozilla.org/en-US/docs/Web/HTML/Element/center#browser_compatibility
+-->
+<p align="center">
+	<img src="assets/readme-banner.png" height="300">
+</p>
 
 A light weight CLI to interact with the OpenAI models from your terminal written in Rust. OpenAI's LLMs are bringing a whole new dimension to the development experience and it's important to bridge the communication with our every day tools.
+
+If you rely on tools like ChatGPT or Github Copilot to aid you while coding, `gptc` might be a right solution to extend that assistance to the terminal. It can help you with tasks like:
+
+- Come up with terminal commands from all major operating systems.
+- Create boilerplate code for most languages (including HTML, CSS, etc.).
+- Answer questions about technical acronyms.
+
+And endless things if you get creative enough...
 
 ## Installation and setup
 
@@ -15,9 +31,14 @@ During installation, `gptc` will prompt you for an OpenAI API key and export the
 ## Usage
 
 ```
-gptc --help
 gptc "linux script to install a binary in bin/ directory"
-gptc "create an index.html file with common html boilerplate"
+gptc -c "create an index.html file with common html boilerplate"
+```
+
+Get a list of flags and descriptions:
+
+```
+gptc --help
 ```
 
 ## Troubleshooting

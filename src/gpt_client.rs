@@ -1,26 +1,34 @@
-use reqwest::{blocking::Client, Error};
-use serde_json::json;
-
 use crate::{args, config, logger};
 
+use http_cache_reqwest;
+use reqwest;
+use reqwest_middleware;
+use serde_json::json;
+
 pub struct GPTClient {
-    http_client: Client,
+    http_client: reqwest_middleware::ClientWithMiddleware,
 }
 
 impl GPTClient {
     pub fn new() -> Self {
         Self {
-            http_client: Client::new(),
+            http_client: reqwest_middleware::ClientBuilder::new(reqwest::Client::new())
+                .with(http_cache_reqwest::Cache(http_cache_reqwest::HttpCache {
+                    mode: http_cache_reqwest::CacheMode::Default,
+                    manager: http_cache_reqwest::CACacheManager::default(),
+                    options: None,
+                }))
+                .build(),
         }
     }
 
-    pub fn query(
+    pub async fn async_query(
         &self,
         args: &args::Args,
         config: &config::Config,
-    ) -> Result<serde_json::Value, Error> {
+    ) -> reqwest_middleware::Result<serde_json::Value> {
         logger::info("waiting for reply...");
-        match self
+        let response = self
             .http_client
             .post("https://api.openai.com/v1/completions")
             .json(&json!({
@@ -47,9 +55,8 @@ impl GPTClient {
                 format!("Bearer {}", config.get_openai_key()),
             )
             .send()
-        {
-            Ok(response) => response.json::<serde_json::Value>(),
-            Err(error) => return Err(error),
-        }
+            .await?;
+
+        Ok(response.json::<serde_json::Value>().await?)
     }
 }

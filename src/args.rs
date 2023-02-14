@@ -1,6 +1,6 @@
 use clap::Parser;
 
-#[derive(Debug, Parser, PartialEq)]
+#[derive(Debug, clap::Parser, PartialEq)]
 #[command(author, version, about)]
 pub struct Args {
     /// Prompt sent to GPT model.

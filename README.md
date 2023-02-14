@@ -28,6 +28,16 @@ curl -fsSL https://raw.githubusercontent.com/dmosc/gptc/main/scripts/install.sh 
 
 During installation, `gptc` will prompt you for an OpenAI API key and export the `$OPENAI_KEY` environment variable inside your shell configuration file (i.e. `.zshrc`, `.bashrc`) with the provided key. The script installs `gptc`'s binary inside `/usr/local/bin` and appends the path to your `$PATH` variable if it isn't registered [(get an API key from OpenAI's platform)](https://platform.openai.com/account/api-keys).
 
+### Updated to latest version
+
+Run the following script to download `gptc`'s latest binary:
+
+```
+curl -fsSL https://raw.githubusercontent.com/dmosc/gptc/main/scripts/update.sh | sh
+```
+
+If all goes well you should have the freshest `gptc` version...
+
 ## Usage
 
 ```

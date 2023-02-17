@@ -21,7 +21,17 @@ error() {
 main() {
 	BIN_PATH="/usr/local/bin";
 	BIN_NAME="gptc";
-	URL="https://github.com/dmosc/gptc/releases/latest/download/gptc";
+	OS=$(uname -s);
+	ARCH=$(uname -m);
+	URL="https://github.com/dmosc/gptc/releases/latest/download/gptc-$OS-$ARCH";
+
+	if [[ $OS != *"Linux"* || $OS != *"Darwin"* || $OS != *"Windows"* ]]; then
+		error "Unsupported operating system: $OS";
+	fi
+
+	if [[ $ARCH != *"x86_64"* || $ARCH != *"arm64"* || $ARCH != *"aarch64"* ]]; then
+		error "Unsupported architecture: $ARCH";
+	fi
 
 	if [[ $SHELL == *"/zsh" ]]; then
 		SHELL_PROFILE="$HOME/.zshrc";

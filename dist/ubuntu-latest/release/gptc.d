@@ -1,0 +1,1 @@
+/home/runner/work/gptc/gptc/dist/ubuntu-latest/release/gptc: /home/runner/work/gptc/gptc/src/args.rs /home/runner/work/gptc/gptc/src/config.rs /home/runner/work/gptc/gptc/src/gpt_client.rs /home/runner/work/gptc/gptc/src/logger.rs /home/runner/work/gptc/gptc/src/main.rs

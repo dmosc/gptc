@@ -1,0 +1,54 @@
+name: "Build distributions for major OS"
+
+on: push
+
+jobs:
+  build:
+    runs-on: ${{ matrix.os }}
+
+    permissions:
+      # Give the default GITHUB_TOKEN write permission to commit and push the
+      # added or changed files to the repository.
+      contents: write
+
+    strategy:
+      matrix:
+        os: ["ubuntu-latest", "macos-latest", "windows-latest"]
+
+    steps:
+      - name: "Checkout repository"
+        uses: actions/checkout@v3
+
+      - name: "Install dependencies"
+        run: |
+          if [ "$RUNNER_OS" = "Linux" ]; then
+            echo "Building for Linux."
+            sudo apt update
+            sudo apt install -y libxcb-shape0-dev libxcb-xfixes0-dev
+          elif [ "$RUNNER_OS" = "Windows" ]; then
+            echo "Building for Windows."
+            # choco install -y xcb-shape xcb-util-wm
+          elif [ "$RUNNER_OS" = "macOS" ]; then
+            echo "Building for macOS."
+          else
+            echo "OS $RUNNER_OS not supported."
+          fi
+        shell: "bash"
+
+      - name: "Build application"
+        run: |
+          export CARGO_TARGET_DIR=dist/${{ matrix.os }}
+          cargo build --verbose --release
+        shell: "bash"
+
+      - name: "Update current commit"
+        run: |
+          git pull --no-edit
+
+      - name: "Commit builds"
+        uses: stefanzweifel/git-auto-commit-action@v4
+        with:
+          commit_message: "Generating build for ${{ matrix.os }} OS."
+          commit_options: "--no-edit"
+          file_pattern: "dist/${{ matrix.os }}/release/gptc"
+          skip_fetch: false

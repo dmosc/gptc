@@ -5,27 +5,16 @@ name: "Build distributions for major OS"
 on:
   pull_request:
     types: [closed]
-    branches:
-      - "!builds-*"
 
 # Defines the build and upload jobs for the gptc application.
 jobs:
-  if_merged:
-    if: github.event.pull_request.merged
-
-    runs-on: ubuntu-latest
-
-    steps:
-      - run: |
-          echo The PR was merged
-
   build_binaries:
     # Runs the job on the specified operating system using a matrix.
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
         # Specifies the latest version of Windows to use for the build.
-        os: ["ubuntu-latest", "macos-latest", "windows-latest"]
+        os: ["ubuntu-latest"]
     steps:
       # Checks out the repository.
       - name: "Checkout repository"
@@ -92,19 +81,20 @@ jobs:
           # Github's UI.
           # https://github.com/orgs/community/discussions/26560#discussioncomment-3531273
           # https://api.github.com/users/github-actions%5Bbot%5D
+
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git config user.name "github-actions[bot]"
+
           # Rebases the pull request branch on the latest changes from the main branch.
           git fetch --all
           git rebase origin/main
+
           # Switches to a new branch for the pull request.
           PR_BRANCH="build-$GITHUB_REF_NAME-$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT"
           git switch -c $PR_BRANCH
-          mkdir dist && mv gptc-*-latest dist
-          # Adds the built binaries to the commit.
+          mkdir -p dist && mv gptc-*-latest dist
           git add .
-          # Commits the changes with a message.
           git commit -m "Add binaries."
-          # Pushes the commit to the pull request branch.
           git push -u origin $PR_BRANCH
-          gh pr create -B main -t "[$GITHUB_REF_NAME]: Build gptc for all distros." -b "This pull request was generated from a Github Action and needs manual approval."
+          gh pr create -B main -t "[$GITHUB_REF_NAME] Build gptc for all distros." -b "This pull request was generated from a Github Action and needs manual approval."
+          gh pr merge $PR_BRANCH -r

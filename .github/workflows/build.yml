@@ -3,10 +3,9 @@ name: "Build distributions for major OS"
 
 # Specifies the trigger for the workflow.
 on:
-  pull_request:
-    types: [closed]
+  push:
     branches:
-      - "!builds-*"
+      - main
 
 # Defines the build and upload jobs for the gptc application.
 jobs:
@@ -98,13 +97,14 @@ jobs:
           git fetch --all
           git rebase origin/main
           # Switches to a new branch for the pull request.
-          PR_BRANCH="build-$GITHUB_REF_NAME-$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT"
-          git switch -c $PR_BRANCH
+          # PR_BRANCH="build-$GITHUB_REF_NAME-$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT"
+          # git switch -c $PR_BRANCH
           mkdir dist && mv gptc-*-latest dist
           # Adds the built binaries to the commit.
           git add .
           # Commits the changes with a message.
           git commit -m "Add binaries."
           # Pushes the commit to the pull request branch.
-          git push -u origin $PR_BRANCH
-          gh pr create -B main -t "[$GITHUB_REF_NAME]: Build gptc for all distros." -b "This pull request was generated from a Github Action and needs manual approval."
+          # git push -u origin $PR_BRANCH
+          git push origin/main
+          # gh pr create -B main -t "[$GITHUB_REF_NAME]: Build gptc for all distros." -b "This pull request was generated from a Github Action and needs manual approval."

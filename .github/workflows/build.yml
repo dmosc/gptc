@@ -5,6 +5,8 @@ name: "Build distributions for major OS"
 on:
   pull_request:
     types: [closed]
+    branches-ignore: |
+		  "build-*"
 
 # Defines the build and upload jobs for the gptc application.
 jobs:

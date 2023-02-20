@@ -25,11 +25,11 @@ main() {
 	OS=$(uname -s)
 
 	if [[ $OS == *"Linux"* ]]; then
-		OS_PATH="dist/gptc-ubuntu-latest/gptc"
+		OS_BIN="gptc-ubuntu-latest"
 	elif [[ $OS == *"Darwin"* ]]; then
-		OS_PATH="dist/gptc-macos-latest/gptc"
+		OS_BIN="gptc-macos-latest"
 	elif [[ $OS == *"Windows"* ]]; then
-		OS_PATH="dist/gptc-windows-latest/gptc"
+		OS_BIN="gptc-windows-latest.exe"
 	else
 		error "OS: $OS not supported."
 	fi
@@ -63,8 +63,8 @@ main() {
 
 	message "Ensuring $BIN_PATH exists";
 	mkdir -p $BIN_PATH;
-	message "Downloading latest binary from $URL/$OS_PATH";
-	curl -L "$URL/$OS_PATH" -o "$BIN_PATH/$BIN_NAME";
+	message "Downloading latest binary from $URL/$OS_BIN";
+	curl -L "$URL/$OS_BIN" -o "$BIN_PATH/$BIN_NAME";
 	chmod +x "$BIN_PATH/$BIN_NAME";
 	message "Finished installing gptc command inside $BIN_PATH";
 	info "Try gptc --help for more information.";

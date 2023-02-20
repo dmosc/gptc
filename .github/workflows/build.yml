@@ -44,6 +44,7 @@ jobs:
       # Builds the gptc application.
       - name: "Build application"
         run: |
+          export CGO_ENABLED=0
           cargo build --release --target-dir "dist/${{ matrix.os }}"
         shell: "bash"
 

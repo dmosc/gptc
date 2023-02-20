@@ -6,7 +6,7 @@ on:
   pull_request:
     types: [closed]
     branches-ignore: |
-		  "build-*"
+      "build-*"
 
 # Defines the build and upload jobs for the gptc application.
 jobs:

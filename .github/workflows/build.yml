@@ -93,6 +93,8 @@ jobs:
 
           # Switches to a new branch for the pull request.
           PR_BRANCH="build-$GITHUB_REF_NAME-$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT"
+          ls -lha
+          echo $PR_BRANCH
           git switch -c $PR_BRANCH
           mkdir -p dist && mv gptc-*-latest dist
           git add .

@@ -1,0 +1,64 @@
+name: Publish gptc binaries to a new release.
+
+# on:
+#   push:
+#     tags:
+#       - "*"
+
+on: push
+
+jobs:
+  publish:
+    name: Publish for ${{ matrix.os }}
+
+    runs-on: ${{ matrix.os }}
+
+    # Grants write access to the repository content and pull requests.
+    permissions:
+      contents: write
+
+    strategy:
+      matrix:
+        include:
+          - os: ubuntu-latest
+            artifact_name: gptc
+            asset_name: gptc-linux-amd64
+          # - os: windows-latest
+          #   artifact_name: gptc.exe
+          #   asset_name: gptc-windows-amd64
+          # - os: macos-latest
+          #   artifact_name: gptc
+          #   asset_name: gptc-macos-amd64
+
+    steps:
+      # Checks out the repository.
+      - name: "Checkout repository"
+        uses: actions/checkout@v3
+
+      # Installs dependencies for the specified OS.
+      - name: "Install dependencies"
+        run: |
+          if [ "$RUNNER_OS" = "Linux" ]; then
+            echo "Building for Linux."
+            sudo apt update
+            sudo apt install -y libxcb-shape0-dev libxcb-xfixes0-dev
+          elif [ "$RUNNER_OS" = "Windows" ]; then
+            echo "Building for Windows."
+            # choco install -y xcb-shape xcb-util-wm
+          elif [ "$RUNNER_OS" = "macOS" ]; then
+            echo "Building for macOS."
+          else
+            echo "OS $RUNNER_OS not supported."
+          fi
+        shell: "bash"
+
+      - name: Build application
+        run: cargo build --release --locked --target-dir "dist/${{ matrix.os }}"
+
+      - name: Upload binaries to release
+        uses: svenstaro/upload-release-action@v2
+        with:
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          file: dist/${{ matrix.os }}/${{ matrix.artifact_name }}
+          asset_name: ${{ matrix.asset_name }}
+          tag: ${{ github.ref }}

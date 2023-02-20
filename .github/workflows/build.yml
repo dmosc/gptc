@@ -1,10 +1,10 @@
-# This YAML file builds and distributes a cross-platform application called "gptc" using GitHub Actions.
 name: "Build distributions for major OS"
 
 # Specifies the trigger for the workflow.
 on:
   pull_request:
     types: [closed]
+
     branches-ignore: |
       "build-*"
 
@@ -13,10 +13,12 @@ jobs:
   build_binaries:
     # Runs the job on the specified operating system using a matrix.
     runs-on: ${{ matrix.os }}
+
     strategy:
       matrix:
         # Specifies the latest version of Windows to use for the build.
         os: ["ubuntu-latest", "macos-latest", "windows-latest"]
+
     steps:
       # Checks out the repository.
       - name: "Checkout repository"
@@ -57,6 +59,7 @@ jobs:
   # Defines the job to open a pull request after successful build and upload.
   open_pull_request:
     runs-on: ubuntu-latest
+
     needs: "build_binaries"
 
     # Grants write access to the repository content and pull requests.
@@ -101,3 +104,51 @@ jobs:
           git push -u origin $PR_BRANCH
           gh pr create -B main -t "[$GITHUB_REF_NAME] Build gptc for all distros." -b "This pull request was generated from a Github Action and needs manual approval."
           gh pr merge $PR_BRANCH -r
+
+  # Creates a release tag containing all the new builds updated with the latest changes.
+  open_release:
+    runs-on: ubuntu-latest
+    needs: "open_pull_request"
+
+    permissions:
+      contents: write
+
+    steps:
+      # Checks out the repository.
+      - name: "Checkout repository"
+        uses: actions/checkout@v3
+
+      # Commits the changes and opens a pull request.
+      - name: "Commit changes and open pull request"
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          # Sets the name and email of the user for committing the changes.
+          # Found the `user.email` and `user.name` attributes to reference "Github Bot" in
+          # Github's UI.
+          # https://github.com/orgs/community/discussions/26560#discussioncomment-3531273
+          # https://api.github.com/users/github-actions%5Bbot%5D
+
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git config user.name "github-actions[bot]"
+
+          # Rebases the pull request branch on the latest changes from the main branch.
+          git fetch --all
+          git rebase origin/main
+
+          # Create tag based on previous tag.
+          CURR_TAG=$(git tag | head -n 1)
+          CURR_TAG_NO_PATCH=$(echo $CURR_TAG | sed 's/.$//')
+          CURR_PATCH=$(echo $CURR_TAG | rev | cut -d "." -f1 | rev)
+          NEXT_PATCH=$(($CURR_PATCH + 1))
+          NEXT_TAG="${CURR_TAG_NO_PATCH}${NEXT_PATCH}"
+
+          gh release create \
+            --draft \
+            --generate-notes \
+            --latest \
+            --title "Latest release changelog..." \
+            $NEXT_TAG \
+            "dist/gptc-ubuntu-latest/gptc#gptc-ubuntu-latest" \
+            "dist/gptc-macos-latest/gptc#gptc-macos-latest" \
+            "dist/gptc-windows-latest/gptc#gptc-windows-latest"

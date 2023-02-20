@@ -21,7 +21,19 @@ error() {
 main() {
 	BIN_PATH="/usr/local/bin";
 	BIN_NAME="gptc";
-	URL="https://github.com/dmosc/gptc/releases/latest/download/gptc";
+	URL="https://github.com/dmosc/gptc/releases/latest/download";
+	OS=$(uname -s)
+
+	if [[ $OS == *"Linux"* ]]; then
+		OS_PATH="dist/gptc-ubuntu-latest/gptc"
+	elif [[ $OS == *"Darwin"* ]]; then
+		OS_PATH="dist/gptc-macos-latest/gptc"
+	elif [[ $OS == *"Windows"* ]]; then
+		OS_PATH="dist/gptc-windows-latest/gptc"
+	else
+		error "OS: $OS not supported."
+	fi
+	message "Identified $OS as current OS.";
 
 	if [[ $SHELL == *"/zsh" ]]; then
 		SHELL_PROFILE="$HOME/.zshrc";
@@ -51,8 +63,8 @@ main() {
 
 	message "Ensuring $BIN_PATH exists";
 	mkdir -p $BIN_PATH;
-	message "Downloading latest binary from $URL";
-	curl -L $URL -o "$BIN_PATH/$BIN_NAME";
+	message "Downloading latest binary from $URL/$OS_PATH";
+	curl -L "$URL/$OS_PATH" -o "$BIN_PATH/$BIN_NAME";
 	chmod +x "$BIN_PATH/$BIN_NAME";
 	message "Finished installing gptc command inside $BIN_PATH";
 	info "Try gptc --help for more information.";

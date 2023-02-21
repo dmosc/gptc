@@ -31,7 +31,7 @@ jobs:
             echo "Building for Linux."
             ldd --version
             sudo apt update
-            sudo apt install -y libxcb-shape0 libxcb-xfixes0 libxcb-xinput0 libxcb-render0 libxcb-shape0 libc6
+            sudo apt install -y libxcb-shape0-dev libxcb-xfixes0-dev libxcb-xinput0 libxcb-render0
           elif [ "$RUNNER_OS" = "Windows" ]; then
             echo "Building for Windows."
             # choco install -y xcb-shape xcb-util-wm

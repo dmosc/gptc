@@ -25,11 +25,14 @@ main() {
 	OS=$(uname -s)
 
 	if [[ $OS == *"Linux"* ]]; then
-		OS_BIN="gptc-ubuntu-latest"
+		ldd --version
+		sudo apt update
+		sudo apt install -y libxcb-shape0-dev libxcb-xfixes0-dev libxcb-xinput0 libxcb-render0
+		OS_BIN="gptc-ubuntu-20.04"
 	elif [[ $OS == *"Darwin"* ]]; then
-		OS_BIN="gptc-macos-latest"
+		OS_BIN="gptc-macos-12"
 	elif [[ $OS == *"Windows"* ]]; then
-		OS_BIN="gptc-windows-latest.exe"
+		OS_BIN="gptc-windows-2022.exe"
 	else
 		error "OS: $OS not supported."
 	fi
@@ -62,10 +65,10 @@ main() {
 	fi
 
 	message "Ensuring $BIN_PATH exists";
-	mkdir -p $BIN_PATH;
+	sudo mkdir -p $BIN_PATH;
 	message "Downloading latest binary from $URL/$OS_BIN";
-	curl -L "$URL/$OS_BIN" -o "$BIN_PATH/$BIN_NAME";
-	chmod +x "$BIN_PATH/$BIN_NAME";
+	sudo curl -L "$URL/$OS_BIN" -o "$BIN_PATH/$BIN_NAME";
+	sudo chmod +x "$BIN_PATH/$BIN_NAME";
 	message "Finished installing gptc command inside $BIN_PATH";
 	info "Try gptc --help for more information.";
 	exec $SHELL;

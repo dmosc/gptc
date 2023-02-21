@@ -99,8 +99,8 @@ jobs:
           # Switches to a new branch for the pull request.
           PR_BRANCH="build-$GITHUB_REF_NAME-$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT"
           git switch -c $PR_BRANCH
-          rsync -ar gptc-*-latest dist
-          rm -rf gptc-*-latest
+          rsync -ar gptc-* dist
+          rm -rf gptc-*
           git add .
           git commit -m "Add binaries."
           git push -u origin $PR_BRANCH

@@ -17,7 +17,7 @@ jobs:
     strategy:
       matrix:
         # Specifies the latest version of Windows to use for the build.
-        os: ["ubuntu-latest", "macos-latest", "windows-latest"]
+        os: ["ubuntu-20.04", "macos-12", "windows-2022"]
 
     steps:
       # Checks out the repository.
@@ -29,8 +29,9 @@ jobs:
         run: |
           if [ "$RUNNER_OS" = "Linux" ]; then
             echo "Building for Linux."
+            ldd --version
             sudo apt update
-            sudo apt install -y libxcb-shape0 libxcb-xfixes0 libxcb-xinput0 libxcb-render0 libxcb-shape0 libc6
+            sudo apt install -y libxcb-shape0-dev libxcb-xfixes0-dev libxcb-xinput0 libxcb-render0
           elif [ "$RUNNER_OS" = "Windows" ]; then
             echo "Building for Windows."
             # choco install -y xcb-shape xcb-util-wm
@@ -98,8 +99,8 @@ jobs:
           # Switches to a new branch for the pull request.
           PR_BRANCH="build-$GITHUB_REF_NAME-$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT"
           git switch -c $PR_BRANCH
-          rsync -ar gptc-*-latest dist
-          rm -rf gptc-*-latest
+          rsync -ar gptc-* dist
+          rm -rf gptc-*
           git add .
           git commit -m "Add binaries."
           git push -u origin $PR_BRANCH
@@ -146,9 +147,9 @@ jobs:
 
           # Copy binaries into a temporary location to avoid name conflicts.
           TMP_DIST=$(mktemp -d)
-          cp dist/gptc-ubuntu-latest/gptc "$TMP_DIST/gptc-ubuntu-latest"
-          cp dist/gptc-macos-latest/gptc "$TMP_DIST/gptc-macos-latest"
-          cp dist/gptc-windows-latest/gptc.exe "$TMP_DIST/gptc-windows-latest.exe"
+          cp dist/gptc-ubuntu-20.04/gptc "$TMP_DIST/gptc-ubuntu-20.04"
+          cp dist/gptc-macos-12/gptc "$TMP_DIST/gptc-macos-12"
+          cp dist/gptc-windows-2022/gptc.exe "$TMP_DIST/gptc-windows-2022.exe"
 
           # Create tag and upload binaries as artifacts.
           gh release create \

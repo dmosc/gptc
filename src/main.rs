@@ -22,20 +22,25 @@ async fn main() -> reqwest_middleware::Result<()> {
                 logger::info("Exiting due to OpenAI API quota/rate limit issue.");
                 process::exit(0);
             }
+
             let reply = response_val.as_object().unwrap()["choices"][0]["text"]
                 .as_str()
                 .unwrap()
                 .trim();
+
             if reply.is_empty() {
                 logger::info("no reply back; try a different wording for the query");
                 process::exit(0);
             }
+
             logger::info("fetched the following:");
+
             for line in reply.lines() {
                 if line.len() > 0 {
                     logger::log(line);
                 }
             }
+
             if args.clipboard {
                 let mut clipboard_context = clipboard::ClipboardContext::new().unwrap();
                 clipboard_context.set_contents(reply.to_string()).unwrap();

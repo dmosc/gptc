@@ -14,40 +14,29 @@ async fn main() -> reqwest_middleware::Result<()> {
     let args = args::load_args();
     let config = config::Config::new().unwrap();
     let gpt_client = gpt_client::GPTClient::new();
-    let query_result = gpt_client.async_query(&args, &config).await;
+    let response = gpt_client.async_query(&args, &config).await?;
+    let reply = response.as_object().unwrap()["choices"][0]["text"]
+        .as_str()
+        .unwrap()
+        .trim();
 
-    match query_result {
-        Ok(response_val) => {
-            if response_val.is_null() {
-                logger::info("Exiting due to OpenAI API quota/rate limit issue.");
-                process::exit(0);
-            }
+    if reply.is_empty() {
+        logger::info("no reply back; try a different wording for the query");
+        process::exit(0);
+    }
 
-            let reply = response_val.as_object().unwrap()["choices"][0]["text"]
-                .as_str()
-                .unwrap()
-                .trim();
+    logger::info("fetched the following:");
 
-            if reply.is_empty() {
-                logger::info("no reply back; try a different wording for the query");
-                process::exit(0);
-            }
-
-            logger::info("fetched the following:");
-
-            for line in reply.lines() {
-                if line.len() > 0 {
-                    logger::log(line);
-                }
-            }
-
-            if args.clipboard {
-                let mut clipboard_context = clipboard::ClipboardContext::new().unwrap();
-                clipboard_context.set_contents(reply.to_string()).unwrap();
-                logger::info("copied contents to clipboard");
-            }
+    for line in reply.lines() {
+        if line.len() > 0 {
+            logger::log(line);
         }
-        Err(e) => return Err(e.into()),
+    }
+
+    if args.clipboard {
+        let mut clipboard_context = clipboard::ClipboardContext::new().unwrap();
+        clipboard_context.set_contents(reply.to_string()).unwrap();
+        logger::info("copied contents to clipboard");
     }
 
     Ok(())
